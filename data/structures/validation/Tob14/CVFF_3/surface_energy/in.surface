@@ -1,0 +1,67 @@
+# (1) Initialization
+units			real
+dimension		3
+boundary		p p p
+newton			on
+atom_style		full
+
+kspace_style	ewald 1e-6
+pair_style		lj/cut/coul/long 12.0
+
+bond_style		harmonic
+angle_style		harmonic
+dihedral_style	harmonic
+improper_style	cvff
+box tilt large
+
+# (2) Atom definition
+read_data		T14_CVFF.data
+
+# (3) Settings
+neighbor		2.0 bin
+special_bonds	lj/coul 0.0 0.0 1.0
+change_box      all triclinic 
+
+
+# BULK -------------------------------
+# Energy minimization
+thermo_style custom atoms step dt time temp etotal pe
+min_style cg
+minimize 1.0e-10 1.0e-10 1000 10000
+
+
+#Print to output text file.
+variable bulkte	equal "etotal"
+variable bulkpe	equal "pe"
+variable N_bulk equal count(all)
+
+print ${bulkpe}
+
+variable E_bulk_per_atom equal ${bulkpe}/${N_bulk}
+
+# slab -------------------------------
+
+#make surface
+change_box all z final -100 100
+change_box all boundary p p p
+
+min_style cg
+minimize 1.0e-8 1.0e-10 8000 10000
+
+#Print to output text file.
+variable slabte	equal "etotal"
+variable slabpe	equal "pe"
+variable N_surf equal "atoms"
+
+
+variable E_bulk_for_slab equal ${E_bulk_per_atom}*${N_surf}
+
+#  ---- Surface Free Energy (SFE)----
+# Calculate surface energy per unit area (A = surface area of slab)
+variable A equal "lx*ly"  # Area of the surface
+
+print "Areas is ${A} slab pe is ${slabpe} and bulk pe is print ${bulkpe}"
+
+variable gamma equal ((0.043*(${slabpe}-${E_bulk_for_slab}))/2*${A})
+
+print ${gamma}

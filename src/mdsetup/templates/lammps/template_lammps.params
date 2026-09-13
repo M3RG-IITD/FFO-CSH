@@ -1,0 +1,76 @@
+## LAMMPS force field file. Automaticly created by MDSetup
+
+# Pair style
+
+pair_style  {{style.pair_style}}
+pair_modify  mix {{mixing_rule}}  tail {{tail}}
+{%- if atoms.coulomb|length > 0 %}
+kspace_style  {{kspace_style}}{%- endif %}
+
+# Define labelmap
+
+labelmap atom {% for i, key in labelmap.atoms.items() %} {{i}}  {{key}} {% endfor %}
+{% if labelmap.bonds %}labelmap bond {% for i, key in labelmap.bonds.items() %} {{i}}  {{key}} {% endfor %}{%- endif %}
+{% if labelmap.angles %}labelmap angle {% for i, key in labelmap.angles.items() %} {{i}}  {{key}} {% endfor %}{%- endif %}
+{% if labelmap.dihedrals %}labelmap dihedral {% for i, key in labelmap.dihedrals.items() %} {{i}}  {{key}} {% endfor %}{%- endif %}
+
+
+# Define special bonds to scale 1-2, 1-3, or 1-4 vdW / Coulomb pair interactions
+
+special_bonds lj {{special_bonds.vdw|join(' ')}}  coul {{special_bonds.coulomb|join(' ')}}
+
+{%- if shake_dict.values()|map('length')|select('>', 0)|first %}
+
+# Define constraint atoms, bonds and angles using the SHAKE algorithm
+
+fix rigid all shake 0.001 100 0 {%- for s in shake_dict %}{%- if shake_dict[s]|length > 0%} {{s}} {{shake_dict[s]|join(' ')}} {%- endif %}{%- endfor %} 
+{%- endif %}
+
+# Define masses
+{% for mass in atoms.masses %}
+mass  {{mass|join(' ')}}
+{%- endfor %}
+
+
+# Van der Waals interactions
+{% for vdw in atoms.vdw %}
+pair_coeff  {{vdw|join(' ')}}
+{%- endfor %}
+
+{%- if atoms.coulomb|length > 0 %}
+
+# Coulomb interactions
+{% for coul in atoms.coulomb %}
+pair_coeff  {{p|join(' ')}}
+{%- endfor %}
+{%- endif %}
+
+{%- if bonds|length > 0%}
+
+# Bonded interactions
+
+bond_style  {{style.bonds_style|join(' ')}}
+{% for bond in bonds %}
+bond_coeff  {{bond|join(' ')}}
+{%- endfor %}
+{%- endif %}
+
+{%- if angles|length > 0%}
+
+# Angle interactions
+
+angle_style  {{style.angles_style|join(' ')}}
+{% for angle in angles %}
+angle_coeff  {{angle|join(' ')}}
+{%- endfor %}
+{%- endif %}
+
+{%- if dihedrals|length > 0%}
+
+# Dihedral interactions
+
+dihedral_style  {{style.dihedral_style|join(' ')}}
+{% for dihedral in dihedrals %}
+dihedral_coeff  {{dihedral|join(' ')}}
+{%- endfor %}
+{%- endif %}

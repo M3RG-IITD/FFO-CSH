@@ -1,0 +1,42 @@
+# Molecule file for {{residue}}. Automaticly created by MDSetup.
+
+{{atom_no}} atoms
+{% if bonds %}{{bond_no}} bonds{% endif %}
+{% if angles %}{{angle_no}} angles{% endif %}
+{% if dihedrals %}{{dihedral_no}} dihedrals{% endif %}
+
+Coords
+{% for coord in coords %}
+{{coord|join('   ')}}
+{%- endfor %}
+
+Types
+{% for type in types %}
+{{type|join('   ')}}
+{%- endfor %}
+
+Charges
+{% for charge in charges %}
+{{charge|join('   ')}}
+{%- endfor %}
+
+{% if bonds %}
+Bonds
+{% for bond in bonds %}
+{{bond|join('   ')}}
+{%- endfor %}
+{% endif %}
+
+{% if angles %}
+Angles
+{% for angle in angles %}
+{{angle|join('   ')}}
+{%- endfor %}
+{% endif %}
+
+{% if dihedrals %}
+Dihedrals
+{% for dihedral in dihedrals %}
+{{dihedral|join('   ')}}
+{%- endfor %}
+{% endif %}

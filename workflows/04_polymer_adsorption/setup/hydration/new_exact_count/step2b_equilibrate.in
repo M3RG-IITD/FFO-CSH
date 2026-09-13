@@ -1,0 +1,106 @@
+# ===========================================================================
+#  STEP 2b: Soft pushoff + NVT of trimmed water around C-S-H
+# ===========================================================================
+# Reads the trimmed data file (exact water count) from trim_water.py
+
+units          real
+atom_style     full
+boundary       p p p
+
+read_data      step2a_trimmed.data
+
+# ---- Groups ----
+group csh      type 1:10
+group water    type 11 12
+
+# ---- Bond / Angle styles ----
+bond_style     harmonic
+bond_coeff 1   350.0000   1.6200
+bond_coeff 2   350.0000   1.7000
+bond_coeff 3   540.6336   0.9600
+bond_coeff 4   350.0000   1.6400
+bond_coeff 5   495.0000   0.9450
+bond_coeff 6   520.0000   0.8850
+bond_coeff 7   540.6336   0.9600
+
+angle_style    harmonic
+angle_coeff 1  100.0000   109.4700
+angle_coeff 2  100.0000   109.4700
+angle_coeff 3  100.0000   141.5000
+angle_coeff 4   50.0000   104.5000
+angle_coeff 5  100.0000   109.4700
+angle_coeff 6  100.0000   109.4700
+angle_coeff 7  100.0000   109.4700
+angle_coeff 8   50.0000   115.0000
+angle_coeff 9   50.0000   104.5000
+
+# ===========================================================================
+#  SOFT-POTENTIAL WARMUP
+# ===========================================================================
+pair_style     soft 4.0
+pair_coeff     * * 0.0
+special_bonds  lj 0 0 1
+
+variable       prefactor equal ramp(0,60)
+fix            soft_ramp all adapt 1 pair soft a * * v_prefactor
+
+fix            freeze_csh csh setforce 0.0 0.0 0.0
+velocity       csh set 0.0 0.0 0.0
+velocity       water create 100.0 67890 dist gaussian
+
+fix            nve_push water nve/limit 0.1
+timestep       1.0
+
+thermo         500
+thermo_style   custom step temp pe ke etotal press pzz lz
+
+run            5000
+
+unfix          nve_push
+unfix          soft_ramp
+
+# ===========================================================================
+#  SWITCH TO REAL POTENTIAL
+# ===========================================================================
+pair_style     lj/cut/coul/long 12.0
+pair_modify    mix geometric tail no
+kspace_style   pppm 1.0e-5
+special_bonds  lj/coul 0 0 1
+
+pair_coeff 1  1    0.2900000000   2.9845107058
+pair_coeff 2  2    0.4400000000   3.8451188675
+pair_coeff 3  3    0.0450000000   3.3096887379
+pair_coeff 4  4    0.0450000000   3.3096887379
+pair_coeff 5  5    0.1554164124   3.1655200879
+pair_coeff 6  6    0.0000000000   0.0000000000
+pair_coeff 7  7    0.1220000000   3.0914185538
+pair_coeff 8  8    0.0159969724   0.9666649776
+pair_coeff 9  9    0.4000000000   3.1003300000
+pair_coeff 10 10   0.0000000000   0.0000000000
+pair_coeff 11 11   0.0000000000   0.0000000000
+pair_coeff 12 12   0.1554164124   3.1655200879
+
+minimize       1.0e-4 1.0e-6 5000 50000
+
+# ---- NVT of water only ----
+velocity       water create 300.0 13579 dist gaussian
+
+fix            nvt_water water nvt temp 300.0 300.0 100.0
+timestep       0.5
+
+dump           1 all custom 2000 step2_water_nvt.lammpstrj id mol type q x y z
+dump_modify    1 sort id
+
+run            50000          # 25 ps at 0.5 fs
+
+timestep       1.0
+run            50000          # 50 ps at 1.0 fs
+
+undump         1
+unfix          nvt_water
+unfix          freeze_csh
+
+write_data     step2_hydrated.data
+write_restart  step2.restart
+
+print "=== Step 2b complete: Water equilibrated ==="

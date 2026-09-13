@@ -1,0 +1,67 @@
+# ===========================================================================
+#  STEP 2a: Create water around C-S-H and write data file for trimming
+# ===========================================================================
+
+units          real
+atom_style     full
+boundary       p p p
+
+read_data      step1_equilibrated.data &
+               extra/atom/types 2  &
+               extra/bond/types 1  &
+               extra/angle/types 1
+
+change_box all z final -108.0 -12.0
+
+mass 11  1.00797    # Hw (bulk)
+mass 12  15.9994    # Ow (bulk)
+
+group csh  type 1:10
+
+# Bond/angle styles needed for delete_atoms
+bond_style     harmonic
+bond_coeff 1   350.0000   1.6200
+bond_coeff 2   350.0000   1.7000
+bond_coeff 3   540.6336   0.9600
+bond_coeff 4   350.0000   1.6400
+bond_coeff 5   495.0000   0.9450
+bond_coeff 6   520.0000   0.8850
+bond_coeff 7   540.6336   0.9600
+
+angle_style    harmonic
+angle_coeff 1  100.0000   109.4700
+angle_coeff 2  100.0000   109.4700
+angle_coeff 3  100.0000   141.5000
+angle_coeff 4   50.0000   104.5000
+angle_coeff 5  100.0000   109.4700
+angle_coeff 6  100.0000   109.4700
+angle_coeff 7  100.0000   109.4700
+angle_coeff 8   50.0000   115.0000
+angle_coeff 9   50.0000   104.5000
+
+pair_style     lj/cut 4.0
+pair_coeff     * * 0.1 3.0
+special_bonds  lj 0 0 1
+
+molecule       water water.mol
+lattice        sc 3.5
+
+region         water_lo block INF INF INF INF -108.0 -90.0 units box
+region         water_hi block INF INF INF INF -29.0 -12.0 units box
+region         waterbox union 2 water_lo water_hi
+
+create_atoms   0 region waterbox mol water 48723
+
+group water    type 11 12
+
+delete_atoms   overlap 3.5 water csh mol yes
+
+reset_ids
+
+variable       nw equal count(water)/3
+print          "Water molecules after overlap deletion: ${nw}"
+
+# Write data file for Python trimming
+write_data     step2a_untrimmed.data
+
+print "=== Step 2a complete: run trim_water.py next ==="

@@ -1,0 +1,47 @@
+# Remember that LAMMPS 2005 uses only single words as commands, e.g. bond_style
+# This script is for lmp_linux executable (2011 64 bit)
+
+# (1) Initialization
+units			real
+dimension		3
+boundary		p p p
+newton			on
+atom_style		full
+#processors		2 2 2
+
+kspace_style	pppm 1.0e-6
+pair_style		lj/cut/coul/long 12.0
+
+bond_style		harmonic	
+angle_style		harmonic
+dihedral_style	harmonic
+improper_style	cvff
+
+# (2) Atom definition: read the .lammps05 file as data.class2
+read_data		Tob11_004_Bulk_cV05_r00.data
+# read_restart	name_of_the_restart_file
+
+# (3) Settings
+neighbor		2.0 bin
+#neigh_modify   delay 0 every 1 check no
+special_bonds	lj/coul 0.0 0.0 1.0
+
+# (4) Minimization: con.grad. (cg)/steep.desc. (sd, somewt. more stable)
+thermo			100
+dump			0 all atom 100 arc_min.class2
+minimize		0.00001 0.000001 1000 10000
+undump			0
+reset_timestep	0
+
+# (5) NPT Dynamics 
+timestep		1.0
+velocity		all create 298.15 4928459 rot yes dist gaussian
+fix				1 all npt temp 298.15 298.15 100.0 aniso 1.0 1.0 200
+thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press pxx pyy pzz lx ly lz vol
+thermo			200
+restart		    1000000 dyn1.restart
+
+dump			1 all atom 10000 sys_arc.lammpstrj
+
+run				10000000
+write_restart	sys.restart

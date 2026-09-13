@@ -1,0 +1,98 @@
+# ===============================================================
+#  POLYMER–CSH ANNEALING (CSH fixed, polymer mobile)
+#  FINAL TESTED VERSION — works with LAMMPS 2 Aug 2023
+# ===============================================================
+
+# ---------- BASIC SETTINGS ----------
+units           real
+dimension       3
+boundary        p p p
+atom_style      full
+atom_modify     map array sort 1000 0.0
+
+# ---------- READ STRUCTURE & PARAMETERS ----------
+read_data       combined.data
+include         combined.params
+
+# ---------- CLEAN IMAGE FLAGS ----------
+set             group all image 0 0 0
+
+# ---------- DEFINE GROUPS ----------
+group           csh type 16 17 18 19 20 21 22 23 24 25
+group           csh_surface type 16 24 25
+group           csh_internal type 17 18 19 20 21 22 23
+group           water type 14 15
+group           polymer type 1 2 3 4 5 6 7 8 9 10 11 12 13
+
+group           relax_group union polymer csh_surface
+group           mobile union polymer water
+
+# ---------- REMOVE INITIAL OVERLAPS ----------
+# (do this *before* initializing long-range electrostatics)
+# delete_atoms    overlap 1.5 polymer csh
+
+# ---------- APPLY SLAB CORRECTION (after structure is stable) ----------
+# kspace_modify   slab 3.0
+
+# ---------- NEIGHBOR SETTINGS ----------
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# ---------- OUTPUT CONTROL ----------
+thermo          200
+thermo_style    custom step temp pe etotal press lx ly lz
+thermo_modify   lost warn
+timestep        1.0
+# dump          dumpall all custom 1000 dump.anneal.lammpstrj id type q x y z
+
+# ---------- TRAJECTORY OUTPUT ----------
+dump            traj all custom 2000 dump.anneal_away.lammpstrj id type q x y z
+dump_modify     traj sort id
+
+# ===============================================================
+#   STAGE 0 – ENERGY MINIMIZATION
+#   (polymer + csh_surface relax, csh_internal fixed)
+# ===============================================================
+# Fix internal CSH before minimization
+# fix             freeze_int csh_internal setforce 0.0 0.0 0.0
+# velocity        csh_internal set 0.0 0.0 0.0
+
+min_style       fire
+min_modify      line quadratic
+minimize        1e-8 1e-8 10000 100000
+
+# After minimization, freeze ALL CSH for MD
+# unfix           freeze_int
+fix             freeze_csh csh setforce 0.0 0.0 0.0
+velocity        csh set 0.0 0.0 0.0
+
+# # ===============================================================
+# #   STAGE 1 – HIGH-T ANNEAL (800 K) (800 K, polymer only)
+# # ===============================================================
+# velocity        mobile create 800.0 12345 mom yes rot yes dist gaussian
+# fix             nvt1 mobile nvt temp 800.0 800.0 100.0
+# run             100000        # 0.1 ns
+
+# # ===============================================================
+# #   STAGE 2 – COOLING (800 → 300 K, polymer only)
+# # ===============================================================
+# unfix           nvt1
+# fix             nvt2 mobile nvt temp 800.0 300.0 100.0
+# run             400000       # 0.4 ns
+
+# ===============================================================
+#   STAGE 3 – EQUILIBRATION (300 K, polymer only)
+# ===============================================================
+# unfix           nvt2
+fix             nvt3 mobile nvt temp 300.0 300.0 100.0
+run             600000       # 0.1 ns
+
+# # ===============================================================
+# #   STAGE 4 – FINAL MINIMIZATION (optional global relax)
+# # ===============================================================
+# unfix           nvt4
+# unfix           freeze_csh
+# min_style       fire
+# minimize        1e-10 1e-10 10000 100000
+
+write_data      post_anneal.data

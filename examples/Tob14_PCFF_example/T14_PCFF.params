@@ -1,0 +1,126 @@
+# LAMMPS coeff file via write_coeff, version 5 Jun 2019
+# pair_style lj/class2/coul/long
+pair_coeff 1 1 0.24 3.65 12
+pair_coeff 2 2 0.4 4.8 12
+pair_coeff 3 3 0.4 4.8 12
+pair_coeff 4 4 0.12 3.7 12
+pair_coeff 5 5 0.06 3.55 12
+pair_coeff 6 6 0.16 3.85 12
+pair_coeff 7 7 0.12 3.6 12
+pair_coeff 8 8 0.26 3.61 12
+pair_coeff 9 9 0.24 3.45 12
+pair_coeff 10 10 0.013 1.098 12
+pair_coeff 11 11 0.013 1.098 12
+
+# bond_style class2
+bond_coeff 1 1.7 350 0 0
+bond_coeff 2 1.62 350 0 0
+bond_coeff 3 1.7 350 0 0
+bond_coeff 4 1.68 350 0 0
+bond_coeff 5 1.59 350 0 0
+bond_coeff 6 0.945 495 0 0
+bond_coeff 7 0.97 563.28 -1428.22 1902.12
+
+# angle_style class2
+angle_coeff 1   100.2 100 0 0
+angle_coeff 2   111.5 100 0 0
+angle_coeff 3   112.5 100 0 0
+angle_coeff 4   111 100 0 0
+angle_coeff 5   107 100 0 0
+angle_coeff 6   107 100 0 0
+angle_coeff 7   111 100 0 0
+angle_coeff 8   139 100 0 0
+angle_coeff 9   144 100 0 0
+angle_coeff 10   115 50 0 0
+angle_coeff 11   103.7 49.84 -11.6 -8
+angle_coeff 1 bb  0 1.7 1.7
+angle_coeff 2 bb  0 1.7 1.62
+angle_coeff 3 bb  0 1.62 1.62
+angle_coeff 4 bb  0 1.7 1.68
+angle_coeff 5 bb  0 1.7 1.7
+angle_coeff 6 bb  0 1.7 1.59
+angle_coeff 7 bb  0 1.59 1.68
+angle_coeff 8 bb  0 1.7 1.7
+angle_coeff 9 bb  0 1.7 1.7
+angle_coeff 10 bb  0 1.68 0.945
+angle_coeff 11 bb  -9.5 0.97 0.97
+angle_coeff 1 ba  0 0 1.7 1.7
+angle_coeff 2 ba  0 0 1.7 1.62
+angle_coeff 3 ba  0 0 1.62 1.62
+angle_coeff 4 ba  0 0 1.7 1.68
+angle_coeff 5 ba  0 0 1.7 1.7
+angle_coeff 6 ba  0 0 1.7 1.59
+angle_coeff 7 ba  0 0 1.59 1.68
+angle_coeff 8 ba  0 0 1.7 1.7
+angle_coeff 9 ba  0 0 1.7 1.7
+angle_coeff 10 ba  0 0 1.68 0.945
+angle_coeff 11 ba  22.35 22.35 0.97 0.97
+
+# dihedral_style class2
+dihedral_coeff 1   0 0 0 0 0 0
+dihedral_coeff 2   0 0 0 0 0 0
+dihedral_coeff 3   0 0 0 0 0 0
+dihedral_coeff 4   0 0 0 0 0 0
+dihedral_coeff 5   0 0 0 0 0 0
+dihedral_coeff 6   0 0 0 0 0 0
+dihedral_coeff 7   0 0 0 0 0 0
+dihedral_coeff 8   0 0 0 0 0 0
+dihedral_coeff 9   0 0 0 0 0 0
+dihedral_coeff 1 aat  0 100.2 139
+dihedral_coeff 2 aat  0 111.5 139
+dihedral_coeff 3 aat  0 100.2 144
+dihedral_coeff 4 aat  0 111.5 144
+dihedral_coeff 5 aat  0 111 139
+dihedral_coeff 6 aat  0 107 139
+dihedral_coeff 7 aat  0 107 139
+dihedral_coeff 8 aat  0 111 115
+dihedral_coeff 9 aat  0 111 115
+dihedral_coeff 1 ebt  0 0 0 0 0 0 1.7 1.7
+dihedral_coeff 2 ebt  0 0 0 0 0 0 1.62 1.7
+dihedral_coeff 3 ebt  0 0 0 0 0 0 1.7 1.7
+dihedral_coeff 4 ebt  0 0 0 0 0 0 1.62 1.7
+dihedral_coeff 5 ebt  0 0 0 0 0 0 1.68 1.7
+dihedral_coeff 6 ebt  0 0 0 0 0 0 1.7 1.7
+dihedral_coeff 7 ebt  0 0 0 0 0 0 1.59 1.7
+dihedral_coeff 8 ebt  0 0 0 0 0 0 1.7 0.945
+dihedral_coeff 9 ebt  0 0 0 0 0 0 1.59 0.945
+dihedral_coeff 1 mbt  0 0 0 1.7
+dihedral_coeff 2 mbt  0 0 0 1.7
+dihedral_coeff 3 mbt  0 0 0 1.7
+dihedral_coeff 4 mbt  0 0 0 1.7
+dihedral_coeff 5 mbt  0 0 0 1.7
+dihedral_coeff 6 mbt  0 0 0 1.7
+dihedral_coeff 7 mbt  0 0 0 1.7
+dihedral_coeff 8 mbt  0 0 0 1.68
+dihedral_coeff 9 mbt  0 0 0 1.68
+dihedral_coeff 1 bb13  0 1.7 1.7
+dihedral_coeff 2 bb13  0 1.62 1.7
+dihedral_coeff 3 bb13  0 1.7 1.7
+dihedral_coeff 4 bb13  0 1.62 1.7
+dihedral_coeff 5 bb13  0 1.68 1.7
+dihedral_coeff 6 bb13  0 1.7 1.7
+dihedral_coeff 7 bb13  0 1.59 1.7
+dihedral_coeff 8 bb13  0 1.7 0.945
+dihedral_coeff 9 bb13  0 1.59 0.945
+dihedral_coeff 1 at  0 0 0 0 0 0 100.2 139
+dihedral_coeff 2 at  0 0 0 0 0 0 111.5 139
+dihedral_coeff 3 at  0 0 0 0 0 0 100.2 144
+dihedral_coeff 4 at  0 0 0 0 0 0 111.5 144
+dihedral_coeff 5 at  0 0 0 0 0 0 111 139
+dihedral_coeff 6 at  0 0 0 0 0 0 107 139
+dihedral_coeff 7 at  0 0 0 0 0 0 107 139
+dihedral_coeff 8 at  0 0 0 0 0 0 111 115
+dihedral_coeff 9 at  0 0 0 0 0 0 111 115
+
+# improper_style class2
+improper_coeff 1   0 0
+improper_coeff 2   0 0
+improper_coeff 3   0 0
+improper_coeff 4   0 0
+improper_coeff 5   0 0
+improper_coeff 1 aa  0 0 0 100.2 111.5 111.5
+improper_coeff 2 aa  0 0 0 111.5 112.5 111.5
+improper_coeff 3 aa  0 0 0 107 111 111
+improper_coeff 4 aa  0 0 0 107 111 111
+improper_coeff 5 aa  0 0 0 107 107 107
+

@@ -1,0 +1,3 @@
+# Time-averaged data for fix store_bulk_energy
+# TimeStep c_pe_all
+271 -27358.2

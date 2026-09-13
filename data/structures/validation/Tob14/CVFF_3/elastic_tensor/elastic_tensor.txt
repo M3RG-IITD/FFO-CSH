@@ -1,0 +1,189 @@
+variable C1neg equal 111.963324814979
+variable C2neg equal 48.6554699808508
+variable C3neg equal 12.9117573825013
+variable C4neg equal -1.36332544518404
+variable C5neg equal -0.231700926436548
+variable C6neg equal -16.666752213677
+
+variable C1pos equal 82.6992387658016
+variable C2pos equal 40.5682860551295
+variable C3pos equal -17.8580789063253
+variable C4pos equal -0.917899921757515
+variable C5pos equal -4.89947360793708
+variable C6pos equal -2.35352372632249
+
+
+variable C11 equal 97.3312817903903
+variable C21 equal 44.61187801799015
+variable C31 equal -2.473160761912
+variable C41 equal -1.1406126834707775
+variable C51 equal -2.565587267186814
+variable C61 equal -9.510137969999745
+
+##############################################
+
+variable C1neg equal 66.3158539082894
+variable C2neg equal 131.890012312256
+variable C3neg equal 28.1423130830061
+variable C4neg equal -8.90487500740986
+variable C5neg equal -3.13502531265805
+variable C6neg equal -8.35722599548225
+
+variable C1pos equal 25.3899997671746
+variable C2pos equal 140.853005070487
+variable C3pos equal 39.3123593507641
+variable C4pos equal -6.60286205093245
+variable C5pos equal 9.44273732824402
+variable C6pos equal -19.8633638783128
+
+variable C12 equal 45.852926837732
+variable C22 equal 136.3715086913715
+variable C32 equal 33.7273362168851
+variable C42 equal -7.7538685291711555
+variable C52 equal 3.153856007792985
+variable C62 equal -14.110294936897525
+
+
+
+#########################################################
+variable C1neg equal 12.1435454224119
+variable C2neg equal 27.7491963283157
+variable C3neg equal 57.4676538945054
+variable C4neg equal -0.311296986277561
+variable C5neg equal 0.94504837172508
+variable C6neg equal 1.28995177415951
+
+variable C1pos equal -26.0050550396021
+variable C2pos equal 28.809684615275
+variable C3pos equal 43.3053240103079
+variable C4pos equal 23.3765997928248
+variable C5pos equal -13.3690612779653
+variable C6pos equal -10.3835458004199
+
+
+variable C13 equal -6.9307548085951005
+variable C23 equal 28.27944047179535
+variable C33 equal 50.38648895240665
+variable C43 equal 11.532651403273618
+variable C53 equal -6.21200645312011
+variable C63 equal -4.546797013130195
+
+##################################################################
+variable C1neg equal 2.47561552663997
+variable C2neg equal -7.20537361342722
+variable C3neg equal -2.33097417894148
+variable C4neg equal 26.5031448771785
+variable C5neg equal -2.55410473091816
+variable C6neg equal -2.28776737097449
+
+
+variable C1pos equal -8.43567621434953
+variable C2pos equal 2.34672540366904
+variable C3pos equal -7.3712722755922
+variable C4pos equal 36.394685668477
+variable C5pos equal -2.91531528635671
+variable C6pos equal 28.7023902461816
+
+
+variable C14 equal -2.9800303438547795
+variable C24 equal -2.4293241048790897
+variable C34 equal -4.85112322726684
+variable C44 equal 31.44891527282775
+variable C54 equal -2.734710008637435
+variable C64 equal 13.207311437603556
+
+#####################################################################
+variable C1neg equal 7.29166450295481
+variable C2neg equal -8.71855222741679
+variable C3neg equal 7.07503022128697
+variable C4neg equal -8.82182652182999
+variable C5neg equal 11.6415538995621
+variable C6neg equal -6.70084446414442
+
+
+variable C1pos equal -18.0812820141529
+variable C2pos equal -2.95312959001356
+variable C3pos equal 20.8950818062584
+variable C4pos equal 26.1671637864245
+variable C5pos equal -3.64252927611898
+variable C6pos equal 9.26141531874722
+
+
+variable C15 equal -5.394808755599046
+variable C25 equal -5.835840908715175
+variable C35 equal 13.985056013772684
+variable C45 equal 8.672668632297254
+variable C55 equal 3.99951231172156
+variable C65 equal 1.2802854273014002
+
+####################################################################
+variable C1neg equal -12.2868282430544
+variable C2neg equal -9.49469279777276
+variable C3neg equal -0.429772351118104
+variable C4neg equal -0.809747550351762
+variable C5neg equal 1.12347801113506
+variable C6neg equal 30.4711161434872
+
+
+variable C1pos equal -33.0887391094062
+variable C2pos equal 12.836492736064
+variable C3pos equal -1.18871963402382
+variable C4pos equal -7.13675007047087
+variable C5pos equal 2.59404851525387
+variable C6pos equal 45.6438277289105
+
+
+variable C16 equal -22.6877836762303
+variable C26 equal 1.6708999691456201
+variable C36 equal -0.809245992570962
+variable C46 equal -3.973248810411316
+variable C56 equal 1.858763263194465
+variable C66 equal 38.05747193619885
+
+
+
+
+
+######################################################
+######################################################
+
+
+variable C11 equal 97.3312817903903
+variable C21 equal 44.61187801799015
+variable C31 equal -2.473160761912
+variable C41 equal -1.1406126834707775
+variable C51 equal -2.565587267186814
+variable C61 equal -9.510137969999745
+variable C12 equal 45.852926837732
+variable C22 equal 136.3715086913715
+variable C32 equal 33.7273362168851
+variable C42 equal -7.7538685291711555
+variable C52 equal 3.153856007792985
+variable C62 equal -14.110294936897525
+variable C13 equal -6.9307548085951005
+variable C23 equal 28.27944047179535
+variable C33 equal 50.38648895240665
+variable C43 equal 11.532651403273618
+variable C53 equal -6.21200645312011
+variable C63 equal -4.546797013130195
+variable C14 equal -2.9800303438547795
+variable C24 equal -2.4293241048790897
+variable C34 equal -4.85112322726684
+variable C44 equal 31.44891527282775
+variable C54 equal -2.734710008637435
+variable C64 equal 13.207311437603556
+variable C15 equal -5.394808755599046
+variable C25 equal -5.835840908715175
+variable C35 equal 13.985056013772684
+variable C45 equal 8.672668632297254
+variable C55 equal 3.99951231172156
+variable C65 equal 1.2802854273014002
+variable C16 equal -22.6877836762303
+variable C26 equal 1.6708999691456201
+variable C36 equal -0.809245992570962
+variable C46 equal -3.973248810411316
+variable C56 equal 1.858763263194465
+variable C66 equal 38.05747193619885
+
+
+

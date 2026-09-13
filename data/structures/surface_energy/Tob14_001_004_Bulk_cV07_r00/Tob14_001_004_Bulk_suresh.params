@@ -1,0 +1,60 @@
+# LAMMPS coeff file via write_coeff, version 5 Jun 2019
+pair_style lj/cut/coul/long 12.0
+pair_modify	mix arithmetic tail yes
+kspace_style  ewald 1e-6
+
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+
+# Define special bonds
+special_bonds	lj/coul 0 0 1
+
+# pair_style lj/cut/coul/long
+pair_coeff 1 1 0.19 3.38542
+pair_coeff 2 2 0.155416 3.16552
+pair_coeff 3 3 0.29 2.98451
+pair_coeff 4 4 0.51 4.05359
+pair_coeff 5 5 0.51 4.05359
+pair_coeff 6 6 0.16 3.02906
+pair_coeff 7 7 0.08 2.93997
+pair_coeff 8 8 0.122 3.09142
+pair_coeff 9 9 0.015997 0.966665
+pair_coeff 10 10 0 0
+pair_coeff 11 11 0.29 2.89542
+
+# bond_style harmonic
+bond_coeff 1 350 1.59
+bond_coeff 2 540.634 0.96
+bond_coeff 3 350 1.7
+bond_coeff 4 350 1.62
+bond_coeff 5 350 1.7
+bond_coeff 6 350 1.68
+bond_coeff 7 495 0.945
+
+# angle_style harmonic
+angle_coeff 1 50 104.5
+angle_coeff 2 100 111.5
+angle_coeff 3 100 100.2
+angle_coeff 4 100 112.5
+angle_coeff 5 100 107
+angle_coeff 6 100 111
+angle_coeff 7 100 111
+angle_coeff 8 100 107
+angle_coeff 9 100 139
+angle_coeff 10 100 144
+angle_coeff 11 50 115
+
+# dihedral_style harmonic
+dihedral_coeff 1 0 1 0
+dihedral_coeff 2 0 1 0
+dihedral_coeff 3 0 1 0
+dihedral_coeff 4 0 1 0
+dihedral_coeff 5 0 1 0
+dihedral_coeff 6 0 1 0
+dihedral_coeff 7 0 1 0
+dihedral_coeff 8 0 1 0
+dihedral_coeff 9 0 1 0
+
+# improper_style cvff
+

@@ -1,0 +1,21 @@
+#!/bin/sh
+#PBS -N Tob14_sim
+#PBS -P m3rg.spons
+#PBS -M $USER@iitd.ac.in
+#PBS -l select=1:ncpus=1:mpiprocs=1:centos=haswell:mem=10gb
+#PBS -l walltime=10:00:00
+export OMP_NUM_THREADS=1
+
+module load apps/lammps/intel/5Jun19
+
+# After job starts, must goto working directory. 
+# $PBS_O_WORKDIR is the directory from where the job is fired. 
+echo "==============================="
+echo $PBS_JOBID
+cat $PBS_NODEFILE
+echo "==============================="
+cd $PBS_O_WORKDIR
+
+# Command to execute LAMMPS on cpu nodes
+time -p mpirun -n 1 lmp_mpi_cpu -i in.class1
+

@@ -1,0 +1,196 @@
+
+# ------------------ Initialize Simulation -----------------------
+clear
+units		real
+dimension	3
+atom_style	full
+boundary p p p
+log log_C-S-H_IFF.txt
+
+####################################
+# Data file, Params & groups 
+####################################
+
+
+read_data nanofoil_water.data    
+
+include  nanofoil_params_IFFN.txt
+
+group packing type 5 6 7 10 11
+
+group water type 12 13
+
+
+#####################################
+#Equilibration
+#####################################
+
+
+#minimization
+
+thermo 100
+thermo_style custom step pe 
+
+min_style cg
+minimize 1e-10 1e-10 10000 10000
+
+
+
+timestep 0.5
+
+
+
+
+###########################
+# dump_details
+###########################
+
+thermo 10000
+thermo_style custom step time temp pe ke etotal press
+
+dump lol all custom 10000 MD.lammpstrj2 id element type q x y z vx vy vz xu yu zu
+dump_modify lol element CA SI O O O CA H O H O H O H sort id 
+
+
+# NVT-10K-300K
+
+velocity packing create 10 134 dist gaussian mom yes rot no
+
+fix 1 packing nvt temp 10 300 50
+
+run 100000
+
+
+unfix 1
+
+
+
+#NVT 300K
+
+
+fix 1 packing nvt temp 300 300 50
+
+run 50000
+
+
+unfix 1
+
+
+#######################
+timestep 1
+#######################
+
+
+#NVT-all ramp
+
+fix 1 packing nvt temp 300 700 100
+
+run 50000
+
+
+unfix 1
+
+
+
+fix 1 packing nvt temp 700 700 100
+
+run 50000
+
+
+unfix 1
+
+
+#Anealing
+
+fix 1 packing nvt temp 700 300 100
+
+run 1000000   # 1 ns
+
+
+unfix 1
+
+
+
+fix 1 packing nvt temp 300 300 100
+
+run 50000
+
+
+unfix 1
+
+
+
+fix 1 water nvt temp 300 300 100
+
+run 50000
+ 
+
+unfix 1
+
+
+
+fix 1 all nvt temp 300 300 100
+
+
+run 100000
+
+
+unfix 1
+
+
+
+
+#NPT_Z_direction
+
+fix npt_z all npt temp 300.0 300.0 100 z 1.0 1.0 1000 
+
+
+run 1000000
+
+
+unfix npt_z
+
+
+
+fix 1 packing nvt temp 300 700 100
+
+run 50000
+
+
+unfix 1
+
+
+
+fix 1 packing nvt temp 700 700 100
+
+run 100000
+
+
+unfix 1
+
+
+fix 1 packing nvt temp 700 300 100
+
+run 1000000
+
+
+unfix 1
+
+
+#NPT_Z_direction
+
+fix npt_z all npt temp 300.0 300.0 100 z 1.0 1.0 1000 
+
+
+run 1000000
+
+
+unfix npt_z
+
+
+
+write_data C-S-H_nanofoil_NPTZ.data nocoeff nofix
+
+
+# unfix press_bar
+# undump 1

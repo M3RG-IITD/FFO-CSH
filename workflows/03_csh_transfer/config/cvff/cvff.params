@@ -1,0 +1,78 @@
+group Ca type 1
+group Si type 2
+group O type 3
+group Ow type 4
+group Oh type 5
+group Hw type 6
+group Ho type 7
+group Ohs type 8
+group Hos type 9
+group Ob type 10
+
+set group Ca charge +1.7
+set group Si charge +1.0
+set group O charge -1.1
+set group Ow charge -0.82    
+set group Oh charge -1.32
+set group Hw charge +0.41   
+set group Ho charge +0.47    
+set group Ohs charge -0.67
+set group Hos charge +0.42
+set group Ob charge -0.5
+
+# Potentials
+
+
+# 
+pair_style lj/cut/coul/long 12.0
+pair_modify mix arithmetic tail yes
+kspace_style ewald 1e-6
+
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+
+# Define special bonds
+special_bonds lj/coul 0 0 1
+
+
+
+# Pair Coeffs
+pair_coeff	1 1    0.2900000000   2.9845107058  # Ca
+pair_coeff	2 2    0.4400000000   3.8451188675  # Si
+pair_coeff	3 3    0.0450000000   3.3096887379  # O
+pair_coeff	4 4    0.1554164124   3.1655200879  # Ow o*
+pair_coeff	5 5    0.40000    3.10033  # Oh   
+pair_coeff	6 6    0.0000000000    0.000000000  # Hw   
+pair_coeff	7 7    0.00000    0.00000  # Ho   
+pair_coeff	8 8    0.1220000000   3.0914185538  # Ohs oc14
+pair_coeff	9 9    0.0159969724   0.9666649776  # Hos hoy
+pair_coeff	10 10  0.0450000000   3.3096887379  # Ob
+
+
+
+#Bond Coeffs 
+
+bond_style	harmonic
+
+bond_coeff   1   520.0000     0.8850   # Oh-Ho    #IFF_portlandite
+bond_coeff   2   540.6336     0.9600   # Ow-Hw   
+bond_coeff   3   350.0000     1.6400   # Si-O
+bond_coeff   4   350.0000     1.6400   # Si-Ohs
+bond_coeff   5   495.0000     0.9450   # Ohs-Hos
+bond_coeff   6   350.0000     1.6400   # Si-Ob
+
+
+#Angle Coeffs 
+
+
+angle_style	harmonic
+
+angle_coeff   1    50.0000   104.5000   # Hw-Ow-Hw  
+angle_coeff   2   100.0000   109.4700   # O-Si-O
+angle_coeff   3    50.0000   115.0000   # Si-Ohs-Hos
+angle_coeff   4   100.0000   141.5000   # Si-O-Si
+angle_coeff   5   100.0000   109.4700   # O-Si-Ob
+angle_coeff   6   100.0000   109.4700   # Ob-Si-Ob
+angle_coeff   7   100.0000   109.4700   # Ohs-Si-O
+angle_coeff   8   100.0000   109.4700   # Ohs-Si-Ob

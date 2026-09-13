@@ -1,0 +1,150 @@
+# ===============================================================
+#  BOX 1: E_close — Polymer + CSH + water (PRODUCTION)
+#  E_ads = E_close - (E_sol + E_surf+water)
+# ===============================================================
+# REPLICA CONTROL: change SEED1, SEED2 for each replica
+# Replica 1: 12347 / 67891
+# Replica 2: 23456 / 78901
+# Replica 3: 34567 / 89013
+variable        SEED1 equal 12347
+variable        SEED2 equal 67891
+
+# ---------- BASIC SETTINGS ----------
+units           real
+dimension       3
+boundary        p p p
+atom_style      full
+atom_modify     map array sort 1000 0.0
+
+# ---------- READ STRUCTURE & PARAMETERS ----------
+read_data       S1_3_1_15_Relaxed.data
+include         ../../../S1_3_1_15.params
+
+# ---------- DEFINE GROUPS ----------
+group           csh type 16 17 18 19 20 21 22 23 24 25
+group           csh_surface type 16 24 25
+group           csh_internal type 17 18 19 20 21 22 23
+group           water type 14 15
+group           polymer type 1 2 3 4 5 6 7 8 9 10 11 12 13
+group           mobile_anneal union polymer water
+# group           backbone type 1 2 3 5 6
+# group           coo_oxygen type 7
+
+# ---------- NEIGHBOR SETTINGS ----------
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# ---------- INTERACTION ENERGY (polymer ↔ CSH) ----------
+# Direct interaction energy — much more stable than three-box Eads
+# Total = pair(vdW + real-space Coulomb) + kspace Coulomb
+compute         eint_total polymer group/group csh kspace yes
+compute         eint_water polymer group/group water kspace yes
+# Pair-only (no kspace) — for checking vdW + real-space Coulomb
+compute         eint_pair  polymer group/group csh
+# Difference (eint_total - eint_pair) gives the kspace Coulomb contribution
+
+# ---------- POLYMER STRUCTURAL COMPUTES ----------
+compute         rg_poly polymer gyration
+compute         msd_poly polymer msd com yes
+
+# ---------- OUTPUT CONTROL ----------
+thermo          1000
+thermo_style    custom step temp pe etotal press lx ly lz &
+                c_eint_total c_eint_water c_eint_pair c_rg_poly c_msd_poly[4]
+thermo_modify   lost warn
+timestep        1.0
+
+# ---------- TRAJECTORY DUMP ----------
+# Include BOTH wrapped (x y z) and unwrapped (xu yu zu) coordinates
+# plus image flags — covers all analysis needs:
+#   - wrapped:   density profiles, RDF, contacts (need PBC distances)
+#   - unwrapped: Rg, end-to-end vector, MSD, orientation (need continuity)
+#   - image flags: allows re-wrapping/unwrapping in post-processing
+dump            traj all custom 10000 S1_3_1_15_dump.lammpstrj &
+                id mol type q x y z xu yu zu vx vy vz ix iy iz
+
+dump_modify     traj sort id
+
+# ---------- TIME-AVERAGED OUTPUTS (production only) ----------
+# These write to separate files — cheap insurance against needing reruns
+
+# Interaction energy time series (every 1000 steps = every ps)
+fix             eint_out all ave/time 1 1000 1000 &
+                c_eint_total c_eint_water c_eint_pair &
+                file eint_timeseries.dat
+
+# MSD time series for lateral diffusion
+fix             msd_out all ave/time 1 1000 1000 &
+                c_msd_poly[1] c_msd_poly[2] c_msd_poly[3] c_msd_poly[4] &
+                file msd_polymer.dat
+
+# Rg time series
+fix             rg_out all ave/time 1 1000 1000 &
+                c_rg_poly &
+                file rg_polymer.dat
+
+# ---------- RESTART FILES ----------
+restart         500000 S1_3_1_15_re_a.restart S1_3_1_15_re_b.restart
+
+# ===============================================================
+#   STAGE 0 – ENERGY MINIMIZATION
+# ===============================================================
+min_style       cg
+minimize        1e-8 1e-8 10000 100000
+
+
+# ===============================================================
+#   STAGE 1 – HIGH-T ANNEAL (600 K, 2 ns)
+# ===============================================================
+velocity        mobile_anneal create 600.0 ${SEED1} mom yes rot yes dist gaussian
+velocity        csh create 300.0 ${SEED2} mom yes rot yes dist gaussian
+fix             com_fix csh recenter INIT INIT INIT
+
+fix             nvt_csh csh nvt temp 300.0 300.0 100.0
+fix             nvt1 mobile_anneal nvt temp 600.0 600.0 100.0
+run             2000000
+
+# ===============================================================
+#   STAGE 2 – COOLING (600 → 300 K, 1 ns)
+# ===============================================================
+unfix           nvt1
+fix             nvt2 mobile_anneal nvt temp 600.0 300.0 100.0
+run             1000000
+# ===============================================================
+#   STAGE 3 – EQUILIBRATION at 300 K (4 ns, all atoms free)
+# ===============================================================
+unfix           nvt2
+unfix           nvt_csh
+fix             nvt3 all nvt temp 300.0 300.0 100.0
+run             2000000
+
+# ===============================================================
+#   STAGE 4 – PRODUCTION at 300 K (30 ns)
+# ===============================================================
+# No velocity reset — continue from equilibrated state
+# Total equil = 2 + 1 + 4 = 7 ns = 7,000,000 steps
+# Production: steps 7,000,001 to 37,000,000
+
+# Reset MSD reference point at production start
+uncompute       msd_poly
+compute         msd_poly polymer msd com yes
+
+# Reset time-averaged outputs so production files start clean
+unfix           msd_out
+unfix           rg_out
+unfix           eint_out
+
+fix             eint_out all ave/time 1 1000 1000 &
+                c_eint_total c_eint_water c_eint_pair &
+                file eint_production.dat
+fix             msd_out all ave/time 1 1000 1000 &
+                c_msd_poly[1] c_msd_poly[2] c_msd_poly[3] c_msd_poly[4] &
+                file msd_production.dat
+fix             rg_out all ave/time 1 1000 1000 &
+                c_rg_poly &
+                file rg_production.dat
+
+run             10000000       # 10 ns production
+
+write_restart   S1_3_1_15_post_production.restart
+write_data      S1_3_1_15_post_production.data

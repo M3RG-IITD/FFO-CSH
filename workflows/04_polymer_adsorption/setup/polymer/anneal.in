@@ -1,0 +1,61 @@
+# LAMMPS input file. Automaticly created by pyLAMMPS
+
+# Define general settings
+
+units real
+dimension 3
+boundary p p p
+atom_style full
+box tilt large
+
+pair_style	lj/cut/coul/long 12 
+pair_modify	mix geometric tail yes
+kspace_style  pppm 0.00001
+
+special_bonds	lj/coul 0 0 1
+
+bond_style	harmonic
+angle_style	harmonic
+# dihedral_style	harmonic
+# improper_style cvff
+
+# Read system
+
+read_data   12BL_2_1_10_class1.data
+
+# ---------- NEIGHBOR SETTINGS ----------
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# ---------- OUTPUT CONTROL ----------
+thermo          200
+thermo_style    custom step temp pe etotal press lx ly lz
+thermo_modify   lost warn
+timestep        0.5
+# dump          dumpall all custom 1000 dump.anneal.lammpstrj id type q x y z
+
+# Initialize velocities for a given temperature
+# velocity all create 300.0 12345
+
+
+# ===============================================================
+#   STAGE 0 – ENERGY MINIMIZATION
+# ===============================================================
+min_style       fire
+min_modify      line quadratic
+minimize        1e-8 1e-8 2000 100000
+
+# ===============================================================
+#   STAGE 1 – EQUILIBRATION (300 K)
+# ===============================================================
+fix             nvt3 all nvt temp 300.0 300.0 100.0
+run             100000       # 50 ps
+
+# ===============================================================
+#   STAGE 2 – FINAL MINIMIZATION
+# ===============================================================
+unfix           nvt3
+min_style       fire
+minimize        1e-10 1e-10 20000 100000
+
+write_data      post_anneal.data

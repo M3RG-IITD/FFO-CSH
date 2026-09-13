@@ -1,0 +1,66 @@
+# Remember that LAMMPS 2005 uses only single words as commands, e.g. bond_style
+# This script is for lmp_linux executable (2011 64 bit)
+
+# (1) Initialization
+units			real
+dimension		3
+boundary		p p p
+newton			on
+atom_style		full
+#processors		2 2 2
+
+#kspace_style	pppm 1.0e-6
+kspace_style ewald 1e-6
+pair_style		lj/class2/coul/long 12.0
+pair_modify     mix sixthpower
+#kspace_modify	mesh 0 0 0 order 5 gewald 0 slab 3.0
+#tune_kspace ..
+
+bond_style		class2
+angle_style		class2
+dihedral_style	class2
+improper_style	class2
+box tilt large
+
+# (2) Atom definition: read the .lammps05 file as data.class2
+read_data		T11H_PCFF.data
+# read_restart	name_of_the_restart_file
+
+# (3) Settings
+neighbor		2.0 bin
+#neigh_modify   delay 10 every 10 check yes
+special_bonds	lj/coul 0.0 0.0 1.0
+change_box      all triclinic 
+
+# (4) Minimization: con.grad. (cg)/steep.desc. (sd, somewt. more stable)
+thermo			100
+dump			0 all atom 100 arc_min.class2
+minimize		0.00001 0.000001 500 10000
+undump			0
+reset_timestep	0
+
+
+# (5) NPT Dynamics (Pre-equilibration)
+timestep		1.0
+velocity		all create 298.15 4928459 rot yes dist gaussian
+fix				1 all npt temp 298.15 298.15 100.0 tri 1.0 1.0 1000 flip no
+thermo_style	custom step lx ly lz cellalpha cellbeta cellgamma vol density
+thermo			200
+restart		    1000000 dyn1.restart
+
+run				10000
+write_restart	sys.restart
+reset_timestep	0
+
+# (6) NPT Dynamics (Dynamic Run for Determining Averages)
+timestep		1.0
+velocity		all create 298.15 4928459 rot yes dist gaussian
+fix				1 all npt temp 298.15 298.15 100.0 tri 1.0 1.0 1000 flip no
+thermo_style	custom step lx ly lz cellalpha cellbeta cellgamma vol density
+thermo			200
+restart		    1000000 dyn1.restart
+
+dump			1 all atom 5000 sys_arc.lammpstrj
+
+run				50000
+write_restart	sys.restart

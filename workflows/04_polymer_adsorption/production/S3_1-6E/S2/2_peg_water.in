@@ -1,0 +1,108 @@
+# ===============================================================
+#  BOX 2: E_sol — Polymer + water, NO CSH (PRODUCTION)
+#  E_ads = E_close - (E_sol + E_surf+water)
+# ===============================================================
+# REPLICA CONTROL: must match S1 replica number
+# Replica 1: 12345 / 67890
+# Replica 2: 23456 / 78901
+# Replica 3: 34567 / 89012
+variable        SEED1 equal 12347
+variable        SEED2 equal 67891
+
+# ---------- BASIC SETTINGS ----------
+units           real
+dimension       3
+boundary        p p p
+atom_style      full
+atom_modify     map array sort 1000 0.0
+
+# ---------- READ STRUCTURE ----------
+read_data       S2_3_1_15_Relaxed.data
+include         ../../S2_3_1_15.params
+
+# ---------- DEFINE GROUPS ----------
+group           polymer type 1 2 3 4 5 6 7 8 9 10 11 12 13
+group           water type 14 15
+group           all_mobile union polymer water
+# group           backbone type 1 2 3 5 6
+
+# ---------- NEIGHBOR SETTINGS ----------
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+# ---------- POLYMER STRUCTURAL COMPUTES ----------
+compute         rg_poly polymer gyration
+compute         msd_poly polymer msd com yes
+
+# ---------- OUTPUT ----------
+thermo          1000
+thermo_style    custom step temp pe etotal press lx ly lz &
+                c_rg_poly c_msd_poly[4]
+thermo_modify   lost warn
+timestep        1.0
+
+# Dump with unwrapped coordinates (matches S1 format)
+dump            traj all custom 10000 S2_3_1_15_dump.lammpstrj &
+                id mol type q x y z xu yu zu ix iy iz
+dump_modify     traj sort id
+
+# Time-averaged outputs
+fix             rg_out all ave/time 1 1000 1000 &
+                c_rg_poly &
+                file rg_polymer.dat
+fix             msd_out all ave/time 1 1000 1000 &
+                c_msd_poly[1] c_msd_poly[2] c_msd_poly[3] c_msd_poly[4] &
+                file msd_polymer.dat
+
+restart         500000 S2_re_a.restart S2_re_b.restart
+
+# ===============================================================
+#   STAGE 0 – ENERGY MINIMIZATION
+# ===============================================================
+min_style       cg
+minimize        1e-8 1e-8 10000 100000
+
+# ===============================================================
+#   STAGE 1 – HIGH-T ANNEAL (800 K, 2 ns)
+# ===============================================================
+velocity        all_mobile create 800.0 ${SEED1} mom yes rot yes dist gaussian
+fix             nvt1 all_mobile nvt temp 800.0 800.0 100.0
+run             2000000
+
+# ===============================================================
+#   STAGE 2 – COOLING (800 → 300 K, 1 ns)
+# ===============================================================
+unfix           nvt1
+fix             nvt2 all_mobile nvt temp 800.0 300.0 100.0
+run             1000000
+
+# ===============================================================
+#   STAGE 3 – EQUILIBRATION at 300 K (4 ns)
+# ===============================================================
+unfix           nvt2
+velocity        all_mobile create 300.0 ${SEED2} mom yes rot yes dist gaussian
+fix             nvt3 all_mobile nvt temp 300.0 300.0 100.0
+run             2000000
+
+# ===============================================================
+#   STAGE 4 – PRODUCTION at 300 K (30 ns)
+# ===============================================================
+# Reset MSD reference at production start
+uncompute       msd_poly
+compute         msd_poly polymer msd com yes
+
+# Reset outputs for clean production files
+unfix           rg_out
+unfix           msd_out
+
+fix             rg_out all ave/time 1 1000 1000 &
+                c_rg_poly &
+                file rg_production.dat
+fix             msd_out all ave/time 1 1000 1000 &
+                c_msd_poly[1] c_msd_poly[2] c_msd_poly[3] c_msd_poly[4] &
+                file msd_production.dat
+
+run             10000000
+
+write_restart   S2_post_production.restart
+write_data      S2_post_production.data

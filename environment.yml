@@ -1,0 +1,28 @@
+name: csh-iff
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.9
+  - pytorch>=2.1
+  - numpy>=1.26
+  - pandas>=2.1
+  - scipy>=1.13
+  - scikit-learn>=1.4
+  - matplotlib>=3.8
+  - seaborn>=0.13
+  - jupyter>=1.0
+  - ipykernel
+  - pyyaml>=6.0
+  - toml>=0.10
+  - jinja2>=3.1
+  - rdkit>=2023.9
+  - pip
+  - pip:
+    - pymoo>=0.6
+    - botorch>=0.9
+    - gpytorch>=1.11
+    - cma>=3.3
+    - pubchempy>=1.0
+    - alchemlyb>=2.2
+    - moleculegraph @ git+https://github.com/maxfleck/moleculegraph.git

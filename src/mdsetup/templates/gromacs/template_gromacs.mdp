@@ -1,0 +1,128 @@
+; mdp file automaticly created by MDSetup
+
+
+;====================================
+;    integrator
+;====================================
+
+{%- if ensemble.em is defined %}
+integrator               = steep
+emtol                    = 1000.0
+emstep                   = {{system.emstep}}
+nsteps                   = {{system.nsteps}} 
+nstlist                  = 1
+pbc                      = {{system.pbc}}
+{%- else %}
+{%- for key, value in system.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+
+;====================================
+;    non-bonded
+;====================================
+{%- for key, value in nonbonded.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+
+{%- if ensemble.t is defined %}
+
+;====================================
+;     T-coupling:
+;====================================
+{%- for key, value in ensemble.t.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+{%- if ensemble.p is defined %}
+
+;====================================
+;     P-coupling:
+;====================================
+{%- for key, value in ensemble.p.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+{%- if ensemble.t is defined %}
+
+;====================================
+;  initial velocities
+;====================================
+{%- if restart_flag == "no" %}
+gen-vel                  = yes
+gen-temp                 = {{ensemble.t.ref_t.split()[0]}} 
+gen-seed                 = {{seed}}
+{%- else %}
+continuation             = {{restart_flag}}
+{%- endif %}
+{%- endif %}
+
+{%- if constraints is defined %}
+
+;====================================
+;     constraints
+;====================================
+{%- for key, value in constraints.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+{%- if nemd is defined %}
+
+;====================================
+;                NEMD
+;====================================
+{%- for key, value in nemd.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+{%- if annealing is defined %}
+
+;====================================
+;             annealing
+;====================================
+{%- for key, value in annealing.items() %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endfor %}
+{%- endif %}
+
+{%- if free_energy is defined %}
+
+;====================================
+; Free energy control
+;====================================
+free_energy               = yes
+init_lambda_state         = {{free_energy.init_lambda_state}}
+delta_lambda              = 0
+calc_lambda_neighbors     = {{free_energy.calc_lambda_neighbors}}
+; Vectors of lambda specified here
+; init_lambda_state         {{free_energy.init_lambda_states}}
+vdw_lambdas               = {{free_energy.vdw_lambdas}}
+coul_lambdas              = {{free_energy.coul_lambdas}}
+; Options for the decoupling
+sc-alpha                  = {{free_energy.sc_alpha}}
+sc-power                  = {{free_energy.sc_power}}
+sc-r-power                = {{free_energy.sc_r_power}}
+sc-coul                   = {{free_energy.sc_coul}}
+couple-moltype            = {{free_energy.couple_moltype}}
+couple-lambda0            = {{free_energy.couple_lambda0}}
+couple-lambda1            = {{free_energy.couple_lambda1}}
+nstdhdl                   = {{free_energy.nstdhdl}}
+{%- endif %}
+
+{%- if umbrella_sampling is defined %}
+
+;====================================
+; Umbrella sampling control
+;====================================
+pull                    = yes
+{%- for key, value in umbrella_sampling.items() %}
+{%- if key.startswith('pull') %}
+{{ key.replace('_', '-').ljust(24) }} = {{ value }}
+{%- endif %}
+{%- endfor %}
+{%- endif %}

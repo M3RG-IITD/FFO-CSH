@@ -1,0 +1,47 @@
+# LAMMPS data file automaticly created by MDSetup
+
+{{atom_type_number}} atom types
+{{bond_type_number}} bond types
+{{angle_type_number}} angle types
+{{torsion_type_number}} dihedral types
+
+{{atom_number}} atoms
+{{bond_number}} bonds
+{{angle_number}} angles
+{{torsion_number}} dihedrals
+
+{{box_x.0}} {{box_x.1}} xlo xhi
+{{box_y.0}} {{box_y.1}} ylo yhi
+{{box_z.0}} {{box_z.1}} zlo zhi
+
+Masses
+{% for n, p in atom_paras %}
+{{n}} {{p.mass}} # {{p.name}}
+{%- endfor %}
+
+
+Atoms
+{% for atom in atoms %}
+{{atom|join('   ')}}
+{%- endfor %}
+
+{% if bonds %}
+Bonds
+{% for bond in bonds %}
+{{bond|join('   ')}}
+{%- endfor %}
+{% endif %}
+
+{% if angles %}
+Angles
+{% for angle in angles %}
+{{angle|join('   ')}}
+{%- endfor %}
+{% endif %}
+
+{% if torsions %}
+Dihedrals
+{% for torsion in torsions %}
+{{torsion|join('   ')}}
+{%- endfor %}
+{% endif %}

@@ -1,0 +1,69 @@
+# LAMMPS script for surface energy calculation - (001) surface in z direction
+# (1) Initialization
+units real
+dimension 3
+boundary p p p       # Keep periodic boundary conditions in all directions
+newton on
+atom_style full
+#processors 2 2 2
+#kspace_style pppm 1.0e-6
+kspace_style ewald 1e-6
+pair_style lj/cut/coul/long 12.0
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+improper_style cvff
+box tilt large
+
+# (2) Atom definition:
+read_data T14_CVFF.data
+# read_restart sys.restart
+
+# Create vacuum above the slab in z direction
+change_box all z scale 5.0 remap    # Scale z-dimension by 5 to create large vacuum
+
+write_data surface_after_zscale.data
+
+# # (3) Settings
+# neighbor 2.0 bin
+# # neigh_modify delay 10 every 10 check yes
+# special_bonds lj/coul 0.0 0.0 1.0
+# change_box all triclinic
+
+# # (4) Minimization: con.grad. (cg)/steep.desc. (sd, somewt. more stable)
+# thermo 100
+# dump 0 all atom 100 arc_min_surface.class1
+# minimize 0.00001 0.000001 500 10000
+# undump 0
+# reset_timestep 0
+
+# # (5) NVT Dynamics (Pre-equilibration)
+# timestep 1.0
+# velocity all create 298.15 4928459 rot yes dist gaussian
+# fix 1 all nvt temp 298.15 298.15 100.0
+# thermo_style custom step temp pe etotal press lx ly lz xy xz yz cellalpha cellbeta cellgamma vol density
+# thermo 200
+# #restart 500000 relaxation_surface.*.restart
+# run 10000
+# write_restart surface_sys.restart
+# reset_timestep 0
+
+# # (6) NVT Dynamics (Production run for averaging)
+# timestep 1.0
+# velocity all create 298.15 4928459 rot yes dist gaussian
+# fix 1 all nvt temp 298.15 298.15 100.0
+# thermo_style custom step temp pe etotal press lx ly lz xy xz yz cellalpha cellbeta cellgamma vol density
+# thermo 200
+# #restart 500000 relaxation_surface.*.restart
+# dump 1 all atom 5000 surface_sys_arc.lammpstrj
+# run 50000
+# undump 1
+# # undump 2
+# write_restart surface_sys.restart
+# write_data surface_after_sim.data
+
+# # Calculate and print the final potential energy for surface energy calculation
+# variable potential_energy equal pe
+# thermo_style custom step v_potential_energy
+# run 0
+# print "Final potential energy: ${potential_energy} kcal/mol"

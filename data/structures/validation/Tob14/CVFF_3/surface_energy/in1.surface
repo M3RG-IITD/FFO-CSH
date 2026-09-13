@@ -1,0 +1,86 @@
+# LAMMPS Script for Surface Energy Calculation
+
+# (1) Bulk Simulation to Get E_bulk
+units           real
+dimension       3
+boundary        p p p
+newton			on
+atom_style      full
+#processors		2 2 2
+
+#kspace_style	pppm 1.0e-6
+kspace_style    ewald 1e-6
+pair_style      lj/cut/coul/long 12.0
+
+
+
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  harmonic
+improper_style  cvff
+box tilt large
+
+# (2) Atom definition: 
+read_data		T14_CVFF.data
+# read_restart	sys.restart
+
+# (3) Settings
+neighbor        2.0 bin
+special_bonds   lj/coul 0.0 0.0 1.0
+change_box      all triclinic
+
+
+thermo          100
+thermo_style    custom step pe atoms 
+
+# Run NPT to equilibrate bulk
+fix             1 all npt temp 298.15 298.15 100.0 tri 1.0 1.0 1000
+run             50000
+
+# Compute bulk energy per atom
+variable        E_bulk equal pe/atoms
+print           "Bulk energy per atom: ${E_bulk}" file bulk_energy.txt
+
+write_data      bulk_data.data
+write_restart   bulk.restart
+
+# (2) Slab Creation for Surface Energy Calculation
+
+# Define a function to create and analyze slabs
+variable slab_thickness equal 30.0   # Set thickness of the slab
+
+label loop_planes
+variable p loop 3
+if "${p} == 1" then "variable plane string 001"
+if "${p} == 2" then "variable plane string 010"
+if "${p} == 3" then "variable plane string 100"
+
+clear
+units           real
+dimension       3
+boundary        p p f   # Free surface in the required direction
+
+read_data       bulk_data.data
+
+# Define the region for slab extraction
+if "${plane} == 001" then "region slab block INF INF INF INF 0 v_slab_thickness units box"
+if "${plane} == 010" then "region slab block INF INF 0 v_slab_thickness INF INF units box"
+if "${plane} == 100" then "region slab block 0 v_slab_thickness INF INF INF INF units box"
+
+delete_atoms    outside slab
+change_box      all triclinic
+
+thermo          100
+thermo_style    custom step pe atoms lx ly 
+
+minimize        1.0e-6 1.0e-8 1000 10000
+
+variable        E_slab equal pe
+variable        N_slab equal atoms
+variable        A equal lx*ly    # Cross-sectional area (adjust for different planes)
+
+variable        gamma equal (v_E_slab - v_N_slab*v_E_bulk)/(2.0*v_A)
+print           "Surface energy for ${plane} = ${gamma} erg/cm^2" file surface_energy.txt
+
+next p
+jump SELF loop_planes

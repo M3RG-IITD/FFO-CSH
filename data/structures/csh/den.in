@@ -1,0 +1,14 @@
+units real
+dimension 3
+boundary p p p
+atom_style full
+box tilt large
+
+read_data CaSi-1.2_WSi-1.6_3_IFF.data
+
+variable rho equal density
+
+thermo_style custom step atoms vol v_rho
+thermo 1
+
+run 0

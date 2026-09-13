@@ -1,0 +1,102 @@
+# ===========================================================================
+#  STEP 3: NPT equilibration of water + C-S-H combined system
+# ===========================================================================
+# Reads the hydrated C-S-H from Step 2 and runs fully-coupled NPT.
+# All atoms are free to move.  Pressure is controlled in all directions.
+#
+# NOTE: If you want anisotropic pressure control (e.g. xy coupled, z free),
+# replace "fix npt_all all npt ..." with:
+#   fix npt_all all npt temp 300.0 300.0 100.0 &
+#       x 1.0 1.0 1000.0 y 1.0 1.0 1000.0 z 1.0 1.0 1000.0 &
+#       couple xy
+# ===========================================================================
+
+units          real
+atom_style     full
+boundary       p p p
+
+# ---- Read hydrated system ----
+read_data      step2_hydrated.data
+
+# ---- Groups ----
+group csh      type 1:10
+group water    type 11 12
+
+# ---- Force-field styles ----
+pair_style     lj/cut/coul/long 12.0
+pair_modify    mix geometric tail no
+kspace_style   pppm 1.0e-5
+
+special_bonds  lj/coul 0 0 1
+
+# ---- Pair Coeffs (CSH, types 1-10) ----
+pair_coeff 1  1    0.2900000000   2.9845107058   # casl
+pair_coeff 2  2    0.4400000000   3.8451188675   # sc2
+pair_coeff 3  3    0.0450000000   3.3096887379   # oc13
+pair_coeff 4  4    0.0450000000   3.3096887379   # oc12
+pair_coeff 5  5    0.1554164124   3.1655200879   # Ow (CSH)
+pair_coeff 6  6    0.0000000000   0.0000000000   # Hw (CSH)
+pair_coeff 7  7    0.1220000000   3.0914185538   # Ohs
+pair_coeff 8  8    0.0159969724   0.9666649776   # Hos
+pair_coeff 9  9    0.4000000000   3.1003300000   # Oh
+pair_coeff 10 10   0.0000000000   0.0000000000   # Ho
+
+# ---- Pair Coeffs (bulk water, types 11-12) ----
+pair_coeff 11 11   0.0000000000   0.0000000000   # Hw (bulk)
+pair_coeff 12 12   0.1554164124   3.1655200879   # Ow (bulk)
+
+# ---- Bond Coeffs ----
+bond_style     harmonic
+bond_coeff 1   350.0000   1.6200   # Si-O (CSH)
+bond_coeff 2   350.0000   1.7000   # Si-Ob
+bond_coeff 3   540.6336   0.9600   # O*-H* (CSH water)
+bond_coeff 4   350.0000   1.6400   # Si-Ohs
+bond_coeff 5   495.0000   0.9450   # Ohs-Hos
+bond_coeff 6   520.0000   0.8850   # Oh-Ho
+bond_coeff 7   540.6336   0.9600   # O-H (bulk water)
+
+# ---- Angle Coeffs ----
+angle_style    harmonic
+angle_coeff 1  100.0000   109.4700   # Ob-Si-O
+angle_coeff 2  100.0000   109.4700   # O-Si-O
+angle_coeff 3  100.0000   141.5000   # Si-Ob-Si
+angle_coeff 4   50.0000   104.5000   # H-O-H (CSH water)
+angle_coeff 5  100.0000   109.4700   # Ob-Si-Ob
+angle_coeff 6  100.0000   109.4700   # Ob-Si-Ohs
+angle_coeff 7  100.0000   109.4700   # O-Si-Ohs
+angle_coeff 8   50.0000   115.0000   # Si-Ohs-Hos
+angle_coeff 9   50.0000   104.5000   # H-O-H (bulk water)
+
+# ---- Thermo output ----
+thermo         1000
+thermo_style   custom step temp pe ke etotal press vol density &
+               pxx pyy pzz lx ly lz
+
+# ---- Minimisation ----
+minimize       1.0e-6 1.0e-8 10000 100000
+
+# ---- Velocity initialisation ----
+velocity       all create 300.0 24680 dist gaussian
+
+# ---- NPT equilibration ----
+# Isotropic pressure at 1 atm, coupled xy, z independent
+fix            npt_all all npt temp 300.0 300.0 100.0 &
+               x 1.0 1.0 1000.0 y 1.0 1.0 1000.0 z 1.0 1.0 1000.0 &
+               couple xy
+
+timestep       1.0
+
+dump           1 all custom 5000 step3_npt.lammpstrj id mol type q x y z
+dump_modify    1 sort id
+
+# ---- NPT equilibration run ----
+run            100000        # 0.1 ns — adjust as needed
+
+undump         1
+unfix          npt_all
+
+# ---- Save final configuration ----
+write_data     step3_final.data
+write_restart  step3.restart
+
+print "=== Step 3 complete: NPT equilibration finished ==="

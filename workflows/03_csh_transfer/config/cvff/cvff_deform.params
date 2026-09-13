@@ -1,0 +1,11 @@
+# 
+pair_style lj/cut/coul/long 12.0
+pair_modify mix arithmetic tail yes
+kspace_style ewald 1e-6
+
+bond_style harmonic
+angle_style harmonic
+dihedral_style harmonic
+
+# Define special bonds
+special_bonds lj/coul 0 0 1

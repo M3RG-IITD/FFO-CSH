@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name sys
+#SBATCH --qos janus
+#SBATCH --nodes 2
+#SBATCH --ntasks-per-node 12
+#SBATCH --time 24:00:00
+#SBATCH --output sys-%j.out
+#SBATCH --mail-type=END
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=tariq.jamil@colorado.edu
+
+module load slurm
+module load intel/impi-15.0.1
+
+#cd /lustre/janus_scratch/chpr6186/LAMMPS/CNT-solvent/CP3-DMAc/Trial1-Fr
+mpiexec /home/taja9698/LAMMPS-Jan16/lmp_mpi -in in.class1 

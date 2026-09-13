@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LAMMPS simulation outputs (keep inputs, exclude outputs)
+log.lammps
+log.lammps.*
+*.restart
+*.restart.*
+*.lammpstrj
+*.dump
+*.dcd
+*.trr
+*.xtc
+
+# HPC job logs
+*.e[0-9]*
+*.o[0-9]*
+LOG.e
+LOG.o
+
+# Large binary files
+*.pkl
+*.pth
+*.pt
+*.h5
+*.hdf5
+*.tar.gz
+*.zip
+
+# Temporary / scratch
+del.*
+del[0-9]*.*
+dsds.*
+tmp.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Virtual environments
+.venv/
+venv/

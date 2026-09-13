@@ -1,0 +1,164 @@
+group Ca type 1
+group Si type 2
+group O type 3
+group Ob type 4
+group Ow type 5
+group Hw type 6
+group Ohs type 7
+group Hos type 8
+group Oh type 9
+group Ho type 10
+
+
+set group Ca charge +1.7
+set group Si charge +1
+set group O charge -1.1
+set group Ow charge -0.82    
+set group Oh charge -1.32
+set group Hw charge +0.41   
+set group Ho charge +0.47    
+set group Ohs charge -0.67
+set group Hos charge +0.42
+set group Ob charge -0.5
+
+
+
+pair_style	lj/cut/coul/long 12 
+pair_modify	mix geometric tail no
+kspace_style  pppm 0.00001
+
+# Define special bonds
+special_bonds	lj/coul 0 0 1
+
+# Pair Coeffs
+pair_coeff	1 1    0.2900000000   2.9845107058   # Ca
+pair_coeff	2 2    0.4400000000   3.8451188675   # Si
+pair_coeff	3 3    0.0450000000   3.3096887379   # O
+pair_coeff	4 4    0.0450000000   3.3096887379   # Ob
+pair_coeff	5 5    0.1554164124   3.1655200879   # Ow
+pair_coeff	6 6    0.0000000000   0.0000000000   # Hw
+pair_coeff	7 7    0.1220000000   3.0914185538   # Ohs
+pair_coeff	8 8    0.0159969724   0.9666649776   # Hos
+pair_coeff	9 9    0.4000000000   3.1003300000   # Oh
+pair_coeff	10 10  0.0000000000   0.0000000000   # Ho
+pair_coeff  11 11  0.0389999952   3.8754094636 # c3
+pair_coeff  12 12  0.0380000011   2.4499714540 # hc
+pair_coeff  13 13  0.0389999952   3.8754094636 # c2
+pair_coeff  14 14  0.1599999990   3.4745050026 # c
+pair_coeff  15 15  0.1479999981   3.6170487995 # c-
+pair_coeff  16 16  0.2280000124   2.8597848722 # o-
+pair_coeff  17 17  0.1599999990   3.4745050026 # c_1   ← copied from type 14 (c)
+pair_coeff  18 18  0.2280000124   2.8597848722 # o_1   ← copied from type 22 (oe1)
+pair_coeff  19 19  0.0600019646   3.5635754253 # ce1
+pair_coeff  20 20  0.0399959909   2.4500029525 # he1
+pair_coeff  21 21  0.2280000124   2.8597848722 # o_2   ← copied from type 16 (o-)
+pair_coeff  22 22  0.2280000124   2.8597848722 # oe1
+pair_coeff  23 23  0.2900005905   2.9845102461 # ca++
+
+#Bond Coeffs 
+
+bond_style	harmonic
+
+bond_coeff   1   350.0000   1.6200   # Si-O
+bond_coeff   2   350.0000   1.7000   # Si-Ob
+bond_coeff   3   540.6336   0.9600   # O*-H* (Ow-Hw / Oh-Ho generic)
+bond_coeff   4   350.0000   1.6400   # Si-Ohs (disabled)
+bond_coeff   5   495.0000   0.9450   # Ohs-Hos
+bond_coeff   6   520.0000   0.8850   # Oh-Ho (disabled / IFF_portlandite ref)
+bond_coeff   7   340.6175   1.1050 # c3-hc
+bond_coeff   8   322.7158   1.5260 # c3-c2
+bond_coeff   9   340.6175   1.1050 # hc-c2
+bond_coeff  10   322.7158   1.5260 # c2-c
+bond_coeff  11   283.0924   1.5200 # c-c-
+bond_coeff  12   322.7158   1.5260 # c3-c
+bond_coeff  13   540.0000   1.2500 # c--o-
+bond_coeff  14   283.0924   1.5200   # c-c_1  ← copied from type 11
+bond_coeff  15   540.0000   1.2500   # c_1-o_1 ← copied from type 13
+bond_coeff  16   540.0000   1.2500   # c_1-o_2 ← copied from type 13
+bond_coeff  17   322.7158   1.5260 # ce1-ce1
+bond_coeff  18   340.6175   1.0900 # ce1-he1
+bond_coeff  19   273.2000   1.4000 # ce1-oe1
+bond_coeff  20   273.2000   1.4000   # ce1-o_2 ← copied from type 19
+
+
+#Angle Coeffs 
+
+
+angle_style	harmonic
+
+angle_coeff   1   100.0000   109.4700   # ob-si-o
+angle_coeff   2   100.0000   109.4700    # o-si-o
+angle_coeff   3   100.0000   141.5000   # si-ob-si
+angle_coeff   4    50.0000   104.5000   # h*-o*-h*
+angle_coeff   5   100.0000   109.4700   # ob-si-ob
+angle_coeff   6   100.0000   109.4700   # ob-si-ohs
+angle_coeff   7   100.0000   109.4700   # o-si-ohs
+angle_coeff   8    50.0000   115.0000   # si-ohs-hos
+angle_coeff   9    39.5000   106.4000 # hc-c3-hc
+angle_coeff  10    44.4000   110.0000 # hc-c3-c2
+angle_coeff  11    44.4000   110.0000 # hc-c2-c
+angle_coeff  12    39.5000   106.4000 # hc-c2-hc
+angle_coeff  13    44.4000   110.0000 # c3-c2-hc
+angle_coeff  14    46.6000   110.5000 # c3-c2-c
+angle_coeff  15    46.6000   110.5000 # c2-c-c-
+angle_coeff  16    46.6000   110.5000 # c3-c-c2
+angle_coeff  17    46.6000   110.5000 # c2-c-c2
+angle_coeff  18    46.6000   110.5000 # c3-c-c-
+angle_coeff  19    68.0000   120.0000 # c-c--o-
+angle_coeff  20   145.0000   123.0000 # o--c--o-
+angle_coeff  21    44.4000   110.0000 # hc-c3-c
+angle_coeff  22    46.6000   110.5000 # c-c2-c
+angle_coeff  23    46.6000   110.5000 # c2-c-c_1
+angle_coeff  24    46.6000   110.5000 # c3-c-c_1
+angle_coeff  25    46.6000   110.5000 # c-c_1-o_1
+angle_coeff  26    46.6000   110.5000 # c-c_1-o_2
+angle_coeff  27    46.6000   110.5000 # o_1-c_1-o_2
+angle_coeff  28    46.6000   110.5000 # c3-c-c3
+angle_coeff  29    44.4000   110.0000 # ce1-ce1-he1
+angle_coeff  30    70.0000   109.5000 # ce1-ce1-oe1
+angle_coeff  31    39.5000   106.4000 # he1-ce1-he1
+angle_coeff  32    57.0000   109.5000 # he1-ce1-oe1
+angle_coeff  33    70.0000   109.5000 # ce1-ce1-o_2 ->copied from 30
+angle_coeff  34    57.0000   109.5000 # he1-ce1-o_2 ->copied from 32
+angle_coeff  35    44.4000   110.0000 # c_1-o_2-ce1
+angle_coeff  36    60.0000   107.0000 # ce1-oe1-ce1
+
+dihedral_style	harmonic
+dihedral_coeff   1     0.1581   1   3 # hc-c3-c2-hc
+dihedral_coeff   2     0.1581   1   3 # hc-c3-c2-c
+dihedral_coeff   3     0.1581   1   3 # hc-c2-c-c-
+dihedral_coeff   4     0.1581   1   3 # hc-c2-c-c3
+dihedral_coeff   5     0.1581   1   3 # hc-c2-c-c2
+dihedral_coeff   6     0.1581   1   3 # c3-c2-c-c-
+dihedral_coeff   7     0.1581   1   3 # c3-c2-c-c3
+dihedral_coeff   8     0.1581   1   3 # c3-c2-c-c2
+dihedral_coeff   9     0.2371   1   3 # c2-c-c--o-  -> copied from 18
+dihedral_coeff  10     0.2371   1   3 # c3-c-c--o-  -> copied from 18
+dihedral_coeff  11     0.1581   1   3 # hc-c3-c-c2
+dihedral_coeff  12     0.1581   1   3 # hc-c3-c-c-
+dihedral_coeff  13     0.1581   1   3 # c-c2-c-c2
+dihedral_coeff  14     0.1581   1   3 # c-c2-c-c-
+dihedral_coeff  15     0.1581   1   3 # c-c2-c-c3
+dihedral_coeff  16     0.1581   1   3 # c-c2-c-c_1
+dihedral_coeff  17     0.1581   1   3 # hc-c2-c-c_1
+dihedral_coeff  18     0.2371   1   3 # c2-c-c_1-o_1
+dihedral_coeff  19     0.2371   1   3 # c2-c-c_1-o_2
+dihedral_coeff  20     0.2371   1   3 # c3-c-c_1-o_1
+dihedral_coeff  21     0.2371   1   3 # c3-c-c_1-o_2
+dihedral_coeff  22     0.1581   1   3 # hc-c3-c-c_1
+dihedral_coeff  23     0.7113   1   3 # c-c_1-o_2-ce1
+dihedral_coeff  24     0.7113   1   3 # o_1-c_1-o_2-ce1
+dihedral_coeff  25     0.1581   1   3 # hc-c3-c-c3
+dihedral_coeff  26     0.1111   1   3 # he1-ce1-ce1-he1
+dihedral_coeff  27     0.1111   1   3 # he1-ce1-ce1-o_2
+dihedral_coeff  28     0.1111   1   3 # he1-ce1-ce1-oe1
+dihedral_coeff  29     0.1111   1   3 # o_2-ce1-ce1-oe1
+dihedral_coeff  30     0.1300   1   3 # ce1-ce1-oe1-ce1
+dihedral_coeff  31     0.1300   1   3 # he1-ce1-oe1-ce1
+dihedral_coeff  32     0.1300   1   3 # ce1-ce1-o_2-c_1 -> copied from 30
+dihedral_coeff  33     0.1300   1   3 # he1-ce1-o_2-c_1 -> copied from 30
+dihedral_coeff  34     0.1111   1   3 # oe1-ce1-ce1-oe1 -> copied from 29
+
+improper_style cvff
+improper_coeff    1    11.6000  -1   2 # c-c--o--o-
+improper_coeff    2    11.6000  -1   2 # c-c_1-o_1-o_2

@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "C-S-H Interface Force Field Optimization"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: Suresh
+    family-names: Bishnoi
+    # orcid: "https://orcid.org/0000-0002-6736-1754"
+  - given-names: Samir
+    family-names: Darouich
+# repository-code: "https://github.com/BASF-code-share"
+license: MIT
+version: "1.0.0"
+date-released: "2025-08-13"
+keywords:
+  - calcium-silicate-hydrate
+  - force field
+  - molecular dynamics
+  - machine learning
+  - active learning
+  - LAMMPS
+  - cement
+  - interface force field
+  - multi-objective optimization
+# references:
+#   - type: article
+#     title: "TODO: Manuscript title"
+#     authors:
+#       - given-names: Suresh
+#         family-names: Bishnoi
+#     journal: "TODO"
+#     year: 2026
+#     doi: "TODO"

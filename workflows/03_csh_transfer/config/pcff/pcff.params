@@ -1,0 +1,114 @@
+group Ca type 1
+group Si type 2
+group O type 3
+group Ow type 4
+group Oh type 5
+group Hw type 6
+group Ho type 7
+group Ohs type 8
+group Hos type 9
+group Ob type 10
+
+set group Ca charge +1.7
+set group Si charge +1.0
+set group O charge -1.1
+set group Ow charge -0.82    
+set group Oh charge -1.32
+set group Hw charge +0.41   
+set group Ho charge +0.47    
+set group Ohs charge -0.67
+set group Hos charge +0.42
+set group Ob charge -0.5
+
+# =========================
+# STYLES (PCFF)
+# =========================
+
+pair_style lj/class2/coul/long 12.0
+pair_modify mix sixthpower
+kspace_style ewald 1e-6
+
+bond_style class2
+angle_style class2
+# dihedral_style class2
+# improper_style class2
+
+special_bonds lj/coul 0 0 1
+
+# =========================
+# PAIR COEFFS (mapped)
+# =========================
+
+pair_coeff 1 1 0.2400 3.5500   # Ca
+pair_coeff 2 2 0.2941 4.7726   # Si  ← UPDATED
+pair_coeff 3 3 0.1121 3.5697   # O   ← UPDATED
+pair_coeff 4 4 0.2600 3.6100   # Ow o*
+pair_coeff 5 5 0.1200 3.6000   # Oh # TODO check this
+pair_coeff 6 6 0.0130 1.0980   # 0.0000 0.0000   # Hw
+pair_coeff 7 7 0.0130 1.0980   # 0.0000 0.0000   # Ho 0.013   1.098
+pair_coeff 8 8 0.1200 3.6000   # Ohs  oc14
+pair_coeff 9 9 0.0130 1.0980   # Hos  hoy
+pair_coeff 10 10 0.1121 3.5697 # Ob
+
+
+# =========================
+# BOND COEFFS (class2)
+# =========================
+
+bond_coeff 1 0.8850 520.0 0.0 0.0
+bond_coeff 2 0.9700 563.28 -1428.22 1902.12
+bond_coeff 3 1.6580 350.0 0.0 0.0   # UPDATED
+bond_coeff 4 1.6580 350.0 0.0 0.0
+bond_coeff 5 0.9450 495.0 0.0 0.0
+bond_coeff 6 1.6580 350.0 0.0 0.0
+
+# =========================
+# ANGLE COEFFS (class2)
+# =========================
+
+angle_coeff 1 103.7 49.84 -11.6 -8.0   # Hw-Ow-Hw 104.5 50.0 0.0 0.0 #
+angle_coeff 2 109.47 100.0 0.0 0.0 # O-Si-O
+angle_coeff 3 115.0 50.0 0.0 0.0   # Si-Ohs-Hos
+angle_coeff 4 141.5 100.0 0.0 0.0  # Si-O-Si
+angle_coeff 5 109.47 100.0 0.0 0.0 # O-Si-Ob
+angle_coeff 6 109.47 100.0 0.0 0.0 # Ob-Si-Ob
+angle_coeff 7 109.47 100.0 0.0 0.0 # Ohs-Si-O
+angle_coeff 8 109.47 100.0 0.0 0.0 # Ohs-Si-Ob
+
+# =========================
+# CLASS2 CROSS TERMS (CORRECT FORMAT)
+# =========================
+
+# Bond-Bond (bb)
+angle_coeff 1 bb -9.5 0.97 0.97
+angle_coeff * bb 0.0 1.658 1.658
+
+# Bond-Angle (ba)
+angle_coeff 1 ba 22.35 22.35 0.97 0.97
+angle_coeff * ba 0.0 0.0 1.658 1.658
+
+
+# =========================
+# DIHEDRAL (mostly zero in your data)
+# =========================
+
+# dihedral_coeff * 0 0 0 0 0 0
+
+# =========================
+# IMPROPER
+# =========================
+
+# improper_coeff * 0.0 0.0
+
+# # =========================
+# # CLASS2 CROSS TERMS (IMPORTANT)
+# # =========================
+
+# # Simplified (safe default if unsure)
+# bondbond_coeff 1 -9.5 0.97 0.97
+# bondbond_coeff * 0.0 1.65 1.65
+
+# bondangle_coeff 1 22.35 22.35 0.97 0.97
+# bondangle_coeff * 0.0 0.0 1.65 1.65
+
+# angleangle_coeff * 0.0 0.0 0.0 109.47 109.47 109.47

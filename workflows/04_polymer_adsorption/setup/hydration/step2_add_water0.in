@@ -1,0 +1,163 @@
+# ===========================================================================
+#  STEP 2: Add bulk water to equilibrated C-S-H + short NVT of water only
+# ===========================================================================
+# Reads the equilibrated C-S-H from Step 1, shrinks the z-box to the target
+# size for the combined system, fills vacuum with bulk SPC water molecules,
+# removes overlapping waters, then runs NVT with C-S-H atoms frozen.
+#
+# Bulk water uses new types:
+#   atom 11 = Hw (bulk)    atom 12 = Ow (bulk)
+#   bond  7 = O-H (bulk)   angle 9 = H-O-H (bulk)
+# ===========================================================================
+
+units          real
+atom_style     full
+boundary       p p p
+
+# ---- Read equilibrated C-S-H with extra type slots ----
+read_data      step1_equilibrated.data &
+               extra/atom/types 2  &
+               extra/bond/types 1  &
+               extra/angle/types 1
+
+# ---- Resize z-box for water filling ----
+# CSH slab: z ~ [-83, -35] (48 A thick).
+# Target: ~20 A of water on each side → box z from -103 to -15 (88 A total).
+# The water layers merge across the z periodic boundary → 40 A water slab.
+# Adjust these values to control the amount of water.
+change_box all z final -103.0 -15.0
+
+# ---- Define masses for new bulk water types ----
+mass 11  1.00797    # Hw (bulk)
+mass 12  15.9994    # Ow (bulk)
+
+# ---- Groups ----
+# CSH groups (same as step 1)
+group Ca   type 1
+group Si   type 2
+group Oc13 type 3
+group Oc12 type 4
+group Ow_c type 5          # CSH water O
+group Hw_c type 6          # CSH water H
+group Ohs  type 7
+group Hos  type 8
+group Oh   type 9
+group Ho   type 10
+
+group csh  type 1:10       # all CSH atoms
+
+# ---- Force-field styles ----
+pair_style     lj/cut/coul/long 12.0
+pair_modify    mix geometric tail no
+kspace_style   pppm 1.0e-5
+
+special_bonds  lj/coul 0 0 1
+
+# ---- Pair Coeffs (CSH, types 1-10) ----
+pair_coeff 1  1    0.2900000000   2.9845107058   # casl
+pair_coeff 2  2    0.4400000000   3.8451188675   # sc2
+pair_coeff 3  3    0.0450000000   3.3096887379   # oc13
+pair_coeff 4  4    0.0450000000   3.3096887379   # oc12
+pair_coeff 5  5    0.1554164124   3.1655200879   # Ow (CSH)
+pair_coeff 6  6    0.0000000000   0.0000000000   # Hw (CSH)
+pair_coeff 7  7    0.1220000000   3.0914185538   # Ohs
+pair_coeff 8  8    0.0159969724   0.9666649776   # Hos
+pair_coeff 9  9    0.4000000000   3.1003300000   # Oh
+pair_coeff 10 10   0.0000000000   0.0000000000   # Ho
+
+# ---- Pair Coeffs (bulk water, types 11-12) ----
+pair_coeff 11 11   0.0000000000   0.0000000000   # Hw (bulk)
+pair_coeff 12 12   0.1554164124   3.1655200879   # Ow (bulk)
+
+# ---- Bond Coeffs (CSH: 1-6, bulk water: 7) ----
+bond_style     harmonic
+bond_coeff 1   350.0000   1.6200   # Si-O (CSH)
+bond_coeff 2   350.0000   1.7000   # Si-Ob
+bond_coeff 3   540.6336   0.9600   # O*-H* (CSH water)
+bond_coeff 4   350.0000   1.6400   # Si-Ohs
+bond_coeff 5   495.0000   0.9450   # Ohs-Hos
+bond_coeff 6   520.0000   0.8850   # Oh-Ho
+bond_coeff 7   540.6336   0.9600   # O-H (bulk water)
+
+# ---- Angle Coeffs (CSH: 1-8, bulk water: 9) ----
+angle_style    harmonic
+angle_coeff 1  100.0000   109.4700   # Ob-Si-O
+angle_coeff 2  100.0000   109.4700   # O-Si-O
+angle_coeff 3  100.0000   141.5000   # Si-Ob-Si
+angle_coeff 4   50.0000   104.5000   # H-O-H (CSH water)
+angle_coeff 5  100.0000   109.4700   # Ob-Si-Ob
+angle_coeff 6  100.0000   109.4700   # Ob-Si-Ohs
+angle_coeff 7  100.0000   109.4700   # O-Si-Ohs
+angle_coeff 8   50.0000   115.0000   # Si-Ohs-Hos
+angle_coeff 9   50.0000   104.5000   # H-O-H (bulk water)
+
+# ---- Create bulk water molecules ----
+# Read molecule template
+molecule       water water.mol
+
+# Lattice spacing ~3.1 A gives approximately 1 g/cm3 water density.
+# Molecules are placed on a simple cubic lattice, then overlaps are removed.
+lattice        sc 3.1
+
+# Water region BELOW CSH slab (z < -85, with 2 A buffer from CSH)
+region         water_lo block INF INF INF INF -103.0 -85.0 units box
+# Water region ABOVE CSH slab (z > -33, with 2 A buffer from CSH)
+region         water_hi block INF INF INF INF -33.0 -15.0 units box
+# Union of both regions
+region         waterbox union 2 water_lo water_hi
+
+create_atoms   0 region waterbox mol water 48723
+
+# ---- Group bulk water ----
+group water    type 11 12
+group Hw_bulk  type 11
+group Ow_bulk  type 12
+
+# ---- Remove overlapping water molecules ----
+# Any water molecule with an atom within 2.0 A of any CSH atom is deleted.
+
+delete_atoms   overlap 2.5 water csh mol yes
+
+# ---- Fix atom IDs and image flags after deletion ----
+reset_ids
+set            group all image 0 0 0
+
+# ---- Report ----
+variable nw equal count(water)
+print "Bulk water atoms created: ${nw}"
+
+# ---- Short minimisation to relieve bad contacts ----
+thermo         500
+thermo_style   custom step temp pe ke etotal press pzz lz
+
+# Freeze CSH during water equilibration
+fix            freeze_csh csh setforce 0.0 0.0 0.0
+velocity       csh set 0.0 0.0 0.0
+
+minimize       1.0e-4 1.0e-6 5000 50000
+
+
+# ---- NVT of water only (CSH frozen) ----
+velocity       water create 300.0 67890 dist gaussian
+
+fix            nvt_water water nvt temp 300.0 300.0 100.0
+timestep       0.5            # small timestep initially
+
+dump           1 all custom 2000 step2_water_nvt.lammpstrj id mol type q x y z
+dump_modify    1 sort id
+
+# Short NVT: 50 ps with 0.5 fs timestep, then 50 ps with 1.0 fs
+run            50000         # 50 ps at 0.5 fs
+
+timestep       1.0
+run            50000          # 50 ps at 1.0 fs
+
+undump         1
+unfix          nvt_water
+unfix          freeze_csh
+
+# ---- Save hydrated configuration ----
+write_data     step2_hydrated.data
+write_restart  step2.restart
+
+print "=== Step 2 complete: Water added and equilibrated ==="

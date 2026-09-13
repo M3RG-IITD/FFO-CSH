@@ -1,0 +1,119 @@
+  --- Density Profiles ---
+  [1:1] Computing density profiles...
+  [1:1] Surface z = 50.3 Å
+  [1:1] Done.
+  [1:1] Steric layer thickness δ ≈ 79.2 Å
+
+  --- Ca-COO RDF ---
+  [Ca-COO 1:1] RDF computed over 491 frames
+
+  --- Polymer Height ---
+  [1:1] Polymer height above surface: 26.9 ± 20.0 Å
+
+  --- Backbone Orientation ---
+  [1:1] Backbone angle from surface: 15.6 ± 15.1°
+
+============================================================
+  TRAJECTORY ANALYSIS: C:E = 2:1
+============================================================
+
+  Loading S1 (adsorbed)...
+  S1: 41441 atoms, 1005 frames
+
+  Loading S2 (bulk)...
+  S2: 26694 atoms, 345 frames
+
+  --- Rg Analysis ---
+  [2:1 adsorbed] Rg = 22.39 ± 0.61 Å
+  [2:1 adsorbed] Rg_parallel = 19.37 Å, Rg_perp = 11.21 Å
+  [2:1 adsorbed] Flattening F = 1.73 ± 0.07
+  [2:1 bulk] Rg = nan ± nan Å
+  [2:1 bulk] Rg_parallel = nan Å, Rg_perp = nan Å
+  [2:1 bulk] Flattening F = nan ± nan
+
+  --- Surface Coverage ---
+  [2:1] Coverage (hull): 77.4 ± 16.2 %
+  [2:1] Coverage (grid): 30.1 ± 6.6 %
+
+  --- Contact Analysis ---
+  [2:1] Ca-COO contacts: 0.0 ± 0.0
+
+  --- Density Profiles ---
+  [2:1] Computing density profiles...
+  [2:1] Surface z = 20.8 Å
+  [2:1] Done.
+  [2:1] Steric layer thickness δ ≈ 79.6 Å
+
+  --- Ca-COO RDF ---
+  [Ca-COO 2:1] RDF computed over 605 frames
+
+  --- Polymer Height ---
+  [2:1] Polymer height above surface: 12.6 ± 3.9 Å
+
+  --- Backbone Orientation ---
+  [2:1] Backbone angle from surface: 12.4 ± 3.5°
+
+============================================================
+  TRAJECTORY ANALYSIS: C:E = 3:1
+============================================================
+
+  Loading S1 (adsorbed)...
+  S1: 41443 atoms, 894 frames
+
+  Loading S2 (bulk)...
+  S2: 26696 atoms, 315 frames
+
+  --- Rg Analysis ---
+  [3:1 adsorbed] Rg = 20.75 ± 0.56 Å
+  [3:1 adsorbed] Rg_parallel = 17.46 Å, Rg_perp = 11.17 Å
+  [3:1 adsorbed] Flattening F = 1.57 ± 0.16
+  [3:1 bulk] Rg = nan ± nan Å
+  [3:1 bulk] Rg_parallel = nan Å, Rg_perp = nan Å
+  [3:1 bulk] Flattening F = nan ± nan
+
+  --- Surface Coverage ---
+  [3:1] Coverage (hull): 74.5 ± 19.4 %
+  [3:1] Coverage (grid): 28.5 ± 8.6 %
+
+  --- Contact Analysis ---
+  [3:1] Ca-COO contacts: 13.4 ± 2.2
+
+  --- Density Profiles ---
+  [3:1] Computing density profiles...
+  [3:1] Surface z = 35.4 Å
+  [3:1] Done.
+  [3:1] Steric layer thickness δ ≈ 72.7 Å
+
+  --- Ca-COO RDF ---
+  [Ca-COO 3:1] RDF computed over 494 frames
+
+  --- Polymer Height ---
+  [3:1] Polymer height above surface: 12.4 ± 12.3 Å
+
+  --- Backbone Orientation ---
+  [3:1] Backbone angle from surface: 6.6 ± 1.1°
+
+============================================================
+  GENERATING FIGURE 5
+============================================================
+
+  Figure saved to figures/figure5.pdf
+
+  Figure saved to figures/figure5.png
+
+============================================================
+  SUMMARY TABLE
+============================================================
+
+   C:E |        E_ads |   Rg_ads |  Rg_bulk |  F_ads |   Coverage |   Contacts |   Height
+------------------------------------------------------------------------------------------
+   1:1 |    245.2±6 |    24.58 |      nan |   2.89 |   27.8±17.4% |    1.8±1 |   26.9Å
+   2:1 |     -4.2±6 |    22.39 |      nan |   1.73 |   30.1±6.6% |    0.0±0 |   12.6Å
+   3:1 |    119.7±6 |    20.75 |      nan |   1.57 |   28.5±8.6% |   13.4±2 |   12.4Å
+
+  All results saved to: results
+  Figures saved to: figures
+
+  Done!
+(.venv_BASF-diff-jaxmd) (base) [$USER@cgen006 ~/csh_pce_analysis]
+$ 
